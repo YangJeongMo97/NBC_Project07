@@ -56,7 +56,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> FollowCamera;
 
-	bool isRaising;
+	bool isHovering;
 	float DefaultMoveSpeed;
 
 public:	
@@ -69,7 +69,6 @@ public:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Raise(const FInputActionValue& Value);
-	void EndRaise();
 	void Rolling(const FInputActionValue& Value);
 
 	bool isGround();

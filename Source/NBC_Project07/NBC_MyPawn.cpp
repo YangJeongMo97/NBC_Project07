@@ -90,14 +90,14 @@ void ANBC_MyPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (!isGround() && !isRaising)
+	if (!isGround() && !isHovering)
 	{
 		FVector Gravity = FVector(0.f, 0.f, -980.f);
 		FVector GravityOffset = Gravity * DeltaTime;
 
 		AddActorWorldOffset(GravityOffset, true);
 
-		MoveSpeed *= 0.95f;
+		MoveSpeed = FMath::Clamp(MoveSpeed - MoveSpeed * 0.5f * DeltaTime, 0.f, DefaultMoveSpeed);
 	}
 
 	if (isGround())
@@ -118,7 +118,6 @@ void ANBC_MyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ANBC_MyPawn::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ANBC_MyPawn::Look);
 		EnhancedInputComponent->BindAction(RaiseAction, ETriggerEvent::Triggered, this, &ANBC_MyPawn::Raise);
-		EnhancedInputComponent->BindAction(RaiseAction, ETriggerEvent::Completed, this, &ANBC_MyPawn::EndRaise);
 		EnhancedInputComponent->BindAction(RollingAction, ETriggerEvent::Triggered, this, &ANBC_MyPawn::Rolling);
 	}
 }
@@ -153,14 +152,9 @@ void ANBC_MyPawn::Raise(const FInputActionValue& Value)
 
 	float MoveValue = Value.Get<float>();
 
-	isRaising = (MoveValue > 0.f);
+	isHovering = (MoveValue > 0.f);
 
-	AddActorLocalOffset(FVector(0.f, 0.f, MoveValue * RaiseSpeed * GetWorld()->GetDeltaSeconds()), true);
-}
-
-void ANBC_MyPawn::EndRaise()
-{
-	isRaising = false;
+	AddActorWorldOffset(FVector(0.f, 0.f, MoveValue * RaiseSpeed * GetWorld()->GetDeltaSeconds()), true);
 }
 
 void ANBC_MyPawn::Rolling(const FInputActionValue& Value)
